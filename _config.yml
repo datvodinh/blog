@@ -23,7 +23,7 @@ title: Võ Đình Đạt # the main title
 tagline: Junior Data Scientist # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  My Personal Website.
+  A minimal, responsive, and powerful Jekyll theme for presenting professional writing.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: "https://datvodinh10.github.io/"
