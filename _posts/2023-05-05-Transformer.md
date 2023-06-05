@@ -1,5 +1,5 @@
 ---
-title: Transformer from scratch
+title: Transformer
 date: 2023-05-05 12:00:00 -500
 categories: [Machine Learning, AI]
 tags: [ml,ai,llm]     # TAG names should always be lowercase
