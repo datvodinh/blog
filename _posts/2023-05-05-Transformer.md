@@ -6,8 +6,8 @@ tags: [ml,ai,llm]     # TAG names should always be lowercase
 ---
 
 # Transformer
+We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
 
-Today will talk about transfomer, the algorithm behind the success of Large Language Model!
 ![Alt Text](https://machinelearningmastery.com/wp-content/uploads/2021/08/attention_research_1.png)
 
 --- 
