@@ -22,7 +22,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 <!-- ![Alt Text](/assets/img/transformer.png){: height="40px" width="20px"} -->
 --- 
 
-## I. Key,Query, Value
+## I. Key - Query - Value
 
 <!-- ![Scaled Dot Product](dot-product.png){: height="400px" width="200px"} -->
 ![](qkv.gif)
