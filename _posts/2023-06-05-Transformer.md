@@ -23,7 +23,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 
 
 
-## I. Positional Embedding
+# I. Positional Embedding
 
 $$
 \begin{split}
