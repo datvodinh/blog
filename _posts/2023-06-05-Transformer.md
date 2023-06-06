@@ -25,7 +25,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 ## I. Key,Query, Value
 
 <!-- ![Scaled Dot Product](dot-product.png){: height="400px" width="200px"} -->
-![](https://miro.medium.com/v2/resize:fit:786/1*kxR_DjBgFw7LTTN-Ut34Pw.gif)
+![](qkv.gif)
 
 
 The `key`/`value`/`query` concept is analogous to retrieval systems. 
@@ -49,7 +49,7 @@ where $\alpha(\mathbf{q}, \mathbf{k}_i) \in \mathbb{R}$ (i=1,...,m) are scalar a
 
 <!-- ![Multi-Head Attention](multi-head-attention.png){: height="500px" width="250px"} -->
 
-![](https://miro.medium.com/v2/resize:fit:786/0*X0c962yMhgRKfMTD.gif)
+![](multi-head-attention.gif)
 
 Multi-head attention allows the model to jointly attend to information from different representation
 subspaces at different positions. With a single attention head, averaging inhibits this.
@@ -99,7 +99,7 @@ class MultiHeadAttention(nn.Module):
 
 ## III. Encoder Decoder
 
-![](https://miro.medium.com/v2/resize:fit:720/format:webp/0*1Q2FlNcFND8amq3m.png)
+![](encoder-decoder.webp)
 
 Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations $(x_{1}, ..., x_{n})$ to a sequence of continuous representations $z = (z_{1}, ..., z_{n})$. Given z, the decoder then generates an output sequence $(y_{1}, ..., y_{m})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next.
 
@@ -107,7 +107,7 @@ The Transformer follows this overall architecture using stacked self-attention a
 
 ### 1. Positional Encoding
 
-![](https://miro.medium.com/v2/resize:fit:582/format:webp/0*6MnniQMOBPu4kFq3.png)
+![](positional-encoding.webp)
 
 Positional encoding describes the location or position of an entity in a 
 sequence so that each position is assigned a unique representation.
@@ -142,25 +142,25 @@ class PositionalEncoding(nn.Module):
 
 The multi-headed attention output vector is added to the original positional input embedding. This is called a residual connection. The output of the residual connection goes through a layer normalization.
 
-![](https://miro.medium.com/v2/resize:fit:786/0*RRWR2BsH5SQgMGo3.gif)
+![](residual.gif)
 
 Each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically. This consists of two linear transformations with a ReLU activation in between.
 
 $$ FFN(x) = max(0,x{W}_{1} + b_{1}){W}_{2} + b_{2}$$
 
-![](https://miro.medium.com/v2/resize:fit:786/0*-fdpoPbN-BHAMRnr.gif)
+![](norm.gif)
 
 The residual connections help the network train, by allowing gradients to flow through the networks directly. The layer normalizations are used to stabilize the network which results in substantially reducing the training time necessary. The pointwise feedforward layer is used to project the attention outputs potentially giving it a richer representation.
 ### 3.Masking
 
 Decoders First multi-headed attention layer operates slightly differently. Since the decoder is autoregressive and generates the sequence word by word, you need to prevent it from conditioning to future tokens
 
-![](https://miro.medium.com/v2/resize:fit:828/format:webp/0*QYFua-iIKp5jZLNT.png)
+![](mask.webp)
 
 ### 4.Encoder
 
 
-![](https://miro.medium.com/v2/resize:fit:720/format:webp/0*gxx0-uUpZfAmKmPa.png)
+![](encoder.webp)
 
 The Encoders layers job is to map all input sequences into an abstract continuous representation that holds the learned information for that entire sequence. It contains 2 sub-modules, multi-headed attention, followed by a fully connected network. There are also residual connections around each of the two sublayers followed by a layer normalization.
 
@@ -213,7 +213,7 @@ class Encoder(nn.Module):
 
 ### 5. Decoder
 
-![](https://miro.medium.com/v2/resize:fit:640/0*u8nSpT8Z8ITwzNLV.gif)
+![](decoder.gif)
 
 The decoder’s job is to generate text sequences. The decoder has a similar sub-layer as the encoder. it has two multi-headed attention layers, a pointwise feed-forward layer, and residual connections, and layer normalization after each sub-layer. These sub-layers behave similarly to the layers in the encoder but each multi-headed attention layer has a different job. The decoder is capped off with a linear layer that acts as a classifier, and a softmax to get the word probabilities.
 
