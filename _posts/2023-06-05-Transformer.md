@@ -11,9 +11,12 @@ We will explore the power of the Transformer algorithm, the driving force behind
 ![Alt Text](https://machinelearningmastery.com/wp-content/uploads/2021/08/attention_research_1.png)
 
 --- 
-
-## Attention
-
+## 1. Positional Embedding
+![PE](https://i.stack.imgur.com/E1aEA.jpg)
+## 2. Key,Query, Value
+![KQV](https://i.stack.imgur.com/Tg9yj.png)
+## 3. Attention Mechanism
+![Attention](https://i.stack.imgur.com/MJIyF.png)
 ```python
 class MultiHeadAttention(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -58,8 +61,8 @@ class MultiHeadAttention(nn.Module):
         return out
 ```
 
-## Encoder
-
+## 4. Encoder Decoder
+### 4.1. Encoder
 ```python
 class EncoderBlock(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -106,7 +109,7 @@ class Encoder(nn.Module):
         return out
 ```
 
-## Decoder
+### 4.2. Decoder
 
 ```python
 class DecoderBlock(nn.Module):
@@ -149,3 +152,4 @@ class Decoder(nn.Module):
 
         return out
 ```
+
