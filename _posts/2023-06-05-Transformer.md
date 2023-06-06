@@ -12,7 +12,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 
 --- 
 ## 1. Positional Embedding
-![PE](https://i.stack.imgur.com/E1aEA.jpg)
+![PE](https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png)
 ## 2. Key,Query, Value
 ![KQV](https://i.stack.imgur.com/Tg9yj.png)
 ## 3. Attention Mechanism
