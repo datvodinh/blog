@@ -23,7 +23,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 
 
 
-# I. Positional Embedding
+## I. Positional Embedding
 
 $$
 \begin{split}
@@ -35,13 +35,13 @@ p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right),
 $$
 <!-- ![PE](https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png) -->
 ---
-# II. Key,Query, Value
+## II. Key,Query, Value
 $$
 \mathrm{Attention}(\mathbf{q}, \mathcal{D}) \stackrel{\mathrm{def}}{=} \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i,
 $$
 <!-- ![KQV](https://i.stack.imgur.com/Tg9yj.png) -->
 ---
-# III. Attention Mechanism
+## III. Attention Mechanism
 <!-- ![Attention](https://i.stack.imgur.com/MJIyF.png) -->
 ```python
 class MultiHeadAttention(nn.Module):
@@ -79,8 +79,8 @@ class MultiHeadAttention(nn.Module):
         return out
 ```
 
-# IV. Encoder Decoder
-## 1. Encoder
+## IV. Encoder Decoder
+### 1. Encoder
 ```python
 class EncoderBlock(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -126,7 +126,7 @@ class Encoder(nn.Module):
         return out
 ```
 
-## 2. Decoder
+### 2. Decoder
 
 ```python
 class DecoderBlock(nn.Module):
