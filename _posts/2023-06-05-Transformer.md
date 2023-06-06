@@ -1,21 +1,48 @@
 ---
-title: Transformer
+title: Transformer from Scratch
 date: 2023-06-05 23:00:00 +0700
 categories: [Machine Learning, AI]
 tags: [ml,ai,llm]     # TAG names should always be lowercase
+img_path: /assets/img/transformer/
+math: true
+mermaid: true
+image:
+  path: transformer.png
+  width: 300
+  height: 600
+  alt: Transformer Model
 ---
 
 We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
 
-![Alt Text](https://machinelearningmastery.com/wp-content/uploads/2021/08/attention_research_1.png)
 
+
+
+<!-- ![Alt Text](/assets/img/transformer.png){: height="40px" width="20px"} -->
 --- 
-## 1. Positional Embedding
-![PE](https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png)
-## 2. Key,Query, Value
-![KQV](https://i.stack.imgur.com/Tg9yj.png)
-## 3. Attention Mechanism
-![Attention](https://i.stack.imgur.com/MJIyF.png)
+
+
+
+## I. Positional Embedding
+
+$$
+\begin{split}
+\begin{aligned} 
+p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right),
+\\p_{i, 2j+1} &= \cos\left(\frac{i}{10000^{2j/d}}\right).
+\end{aligned}
+\end{split}
+$$
+<!-- ![PE](https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png) -->
+---
+# II. Key,Query, Value
+$$
+\mathrm{Attention}(\mathbf{q}, \mathcal{D}) \stackrel{\mathrm{def}}{=} \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i,
+$$
+<!-- ![KQV](https://i.stack.imgur.com/Tg9yj.png) -->
+---
+# III. Attention Mechanism
+<!-- ![Attention](https://i.stack.imgur.com/MJIyF.png) -->
 ```python
 class MultiHeadAttention(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -52,8 +79,8 @@ class MultiHeadAttention(nn.Module):
         return out
 ```
 
-## 4. Encoder Decoder
-### 4.1. Encoder
+# IV. Encoder Decoder
+## 1. Encoder
 ```python
 class EncoderBlock(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -99,7 +126,7 @@ class Encoder(nn.Module):
         return out
 ```
 
-### 4.2. Decoder
+## 2. Decoder
 
 ```python
 class DecoderBlock(nn.Module):
