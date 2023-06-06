@@ -11,6 +11,7 @@ image:
   width: 300
   height: 600
   alt: Transformer Model
+enable_d3: true
 ---
 
 We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
@@ -21,28 +22,48 @@ We will explore the power of the Transformer algorithm, the driving force behind
 <!-- ![Alt Text](/assets/img/transformer.png){: height="40px" width="20px"} -->
 --- 
 
+## I. Key,Query, Value
+
+<!-- ![Scaled Dot Product](dot-product.png){: height="400px" width="200px"} -->
+![](https://miro.medium.com/v2/resize:fit:786/1*kxR_DjBgFw7LTTN-Ut34Pw.gif)
 
 
-## I. Positional Embedding
+The `key`/`value`/`query` concept is analogous to retrieval systems. 
 
-$$
-\begin{split}
-\begin{aligned} 
-p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right),
-\\p_{i, 2j+1} &= \cos\left(\frac{i}{10000^{2j/d}}\right).
-\end{aligned}
-\end{split}
-$$
-<!-- ![PE](https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png) -->
----
-## II. Key,Query, Value
-$$
-\mathrm{Attention}(\mathbf{q}, \mathcal{D}) \stackrel{\mathrm{def}}{=} \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i,
-$$
-<!-- ![KQV](https://i.stack.imgur.com/Tg9yj.png) -->
----
-## III. Attention Mechanism
-<!-- ![Attention](https://i.stack.imgur.com/MJIyF.png) -->
+For example, when you search for videos on Youtube, the search engine will map your query (text in the search bar) against a set of keys (video title, description, etc.) associated with candidate videos in their database, then present you the best matched videos (values).
+
+The attention operation can be thought of as a retrieval process as well.
+
+$$\alpha(\mathbf{q}, \mathbf{k}_i) = \mathrm{softmax}(a(\mathbf{q}, \mathbf{k}_i)) = \frac{\exp(\mathbf{q}^\top \mathbf{k}_i / \sqrt{d})}{\sum_{j=1} \exp(\mathbf{q}^\top \mathbf{k}_j / \sqrt{d})}$$
+
+## II. Attention Mechanism
+
+### 1. Attention
+Denote by $\mathcal{D} \stackrel{\mathrm{def}}{=} \{(\mathbf{k}_1, \mathbf{v}_1), \ldots (\mathbf{k}_m, \mathbf{v}_m)\}$ a database of `m` tuples of `keys` and `values`. Moreover, denote by `q` a query. Then we can define the attention over $\mathcal{D}$ as
+
+$$\mathrm{Attention}(\mathbf{q}, \mathcal{D}) \stackrel{\mathrm{def}}{=} \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i$$
+
+where $\alpha(\mathbf{q}, \mathbf{k}_i) \in \mathbb{R}$ (i=1,...,m) are scalar attention weights.
+
+### 2. Multi-Head Attention
+
+<!-- ![Multi-Head Attention](multi-head-attention.png){: height="500px" width="250px"} -->
+
+![](https://miro.medium.com/v2/resize:fit:786/0*X0c962yMhgRKfMTD.gif)
+
+Multi-head attention allows the model to jointly attend to information from different representation
+subspaces at different positions. With a single attention head, averaging inhibits this.
+
+$$ MultiHead(Q,K,V) = [head_{1},...,head_{h}]W^{O} $$
+
+$$ \text{where } {head_{i}} = \text{Attention }(Q{W_{i}^{Q}},K{W_{i}^{K}},V{W_{i}^{V}}) $$
+
+Where the projections are parameter matrices $W_{i}^{Q} ∈ R^{d_{model}×d_{k}} , W_{i}^{K} ∈ R^{d_{model}×d_{k}} , W_{i}^{V} ∈ R^{d_{model}×d_{v}}$
+and $W^{O} ∈ R^{hd_{v}×d_{model}}$
+
+
+Code:
+
 ```python
 class MultiHeadAttention(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -56,22 +77,17 @@ class MultiHeadAttention(nn.Module):
         self.fc = nn.Linear(embed_size,embed_size,bias=bias)
 
     def forward(self,key,query,value,mask=None):
-        # key shape: (batch_size,key_len,embed_size)
-        # query shape: (batch_size,query_len,embed_size)
-        # value shape: (batch_size,value_len,embed_size)
-        # key and query and value all have the same shape
         keys = self.keys(key).reshape(key.shape[0],key.shape[1],self.heads,self.heads_dim)
         queries = self.queries(query).reshape(query.shape[0],query.shape[1],self.heads,self.heads_dim)
         values = self.values(value).reshape(value.shape[0],value.shape[1],self.heads,self.heads_dim)
-        # keys shape: (batch_size,key_len,heads,head_dim)
-        # queries shape: (batch_size,query_len,heads,head_dim)
-        # values shape: (batch_size,value_len,heads,head_dim)
+
         keys = keys / (self.embed_size)**(1/4)
         queries = queries / (self.embed_size)**(1/4)
         dot_product = torch.einsum('bkhd,bqhd->bhqk',keys,queries)
-        # dot_product shape: (batch_size,heads,query_len,key_len)
+
         if mask is not None:
             dot_product = dot_product.masked_fill(mask==0,float('-inf'))
+
         scaled_product = torch.softmax(dot_product ,dim=3)
         alpha = torch.einsum("bhqk,bvhd->bqhd",scaled_product,values)
         out = self.fc(alpha.reshape(key.shape[0],key.shape[1],self.embed_size))
@@ -79,8 +95,77 @@ class MultiHeadAttention(nn.Module):
         return out
 ```
 
-## IV. Encoder Decoder
-### 1. Encoder
+
+
+## III. Encoder Decoder
+
+![](https://miro.medium.com/v2/resize:fit:720/format:webp/0*1Q2FlNcFND8amq3m.png)
+
+Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations $(x_{1}, ..., x_{n})$ to a sequence of continuous representations $z = (z_{1}, ..., z_{n})$. Given z, the decoder then generates an output sequence $(y_{1}, ..., y_{m})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next.
+
+The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers for both the encoder and decoder
+
+### 1. Positional Encoding
+
+![](https://miro.medium.com/v2/resize:fit:582/format:webp/0*6MnniQMOBPu4kFq3.png)
+
+Positional encoding describes the location or position of an entity in a 
+sequence so that each position is assigned a unique representation.
+
+The positional encoding outputs `X+P` using a positional embedding matrix $\mathbf{P} \in \mathbb{R}^{n \times d}$ of the same shape, whose element on the $i^{th}$ row and the ${(2j)}^{th}$ or the ${(2j+1)}^{th}$ column is:
+
+$$\begin{aligned} 
+p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right), \\
+p_{i, 2j+1} &= \cos\left(\frac{i}{10000^{2j/d}}\right)
+\end{aligned} $$
+
+
+
+Code:
+```python
+class PositionalEncoding(nn.Module):
+    def __init__(self,num_hiddens,dropout = 0.5,max_len=1000):
+        super(PositionalEncoding,self).__init__()
+        PE = torch.zeros((1,max_len,num_hiddens))
+        self.dropout = nn.Dropout(dropout)
+        position = torch.arange(0,max_len,dtype=torch.float32).reshape(-1,1) \
+        / torch.pow(10000,torch.arange(0,num_hiddens,2,dtype=torch.float32) / num_hiddens)
+        PE[:,:,0::2] = torch.sin(position)
+        PE[:,:,1::2] = torch.cos(position)
+        self.register_buffer('PE',PE)
+
+    def forward(self,x):
+        x = x + self.PE[:,:x.shape[1],:]
+        return self.dropout(x)
+```
+### 2. The Residual Connections, Layer Normalization, and Feed Forward Network
+
+The multi-headed attention output vector is added to the original positional input embedding. This is called a residual connection. The output of the residual connection goes through a layer normalization.
+
+![](https://miro.medium.com/v2/resize:fit:786/0*RRWR2BsH5SQgMGo3.gif)
+
+Each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically. This consists of two linear transformations with a ReLU activation in between.
+
+$$ FFN(x) = max(0,x{W}_{1} + b_{1}){W}_{2} + b_{2}$$
+
+![](https://miro.medium.com/v2/resize:fit:786/0*-fdpoPbN-BHAMRnr.gif)
+
+The residual connections help the network train, by allowing gradients to flow through the networks directly. The layer normalizations are used to stabilize the network which results in substantially reducing the training time necessary. The pointwise feedforward layer is used to project the attention outputs potentially giving it a richer representation.
+### 3.Masking
+
+Decoders First multi-headed attention layer operates slightly differently. Since the decoder is autoregressive and generates the sequence word by word, you need to prevent it from conditioning to future tokens
+
+![](https://miro.medium.com/v2/resize:fit:828/format:webp/0*QYFua-iIKp5jZLNT.png)
+
+### 4.Encoder
+
+
+![](https://miro.medium.com/v2/resize:fit:720/format:webp/0*gxx0-uUpZfAmKmPa.png)
+
+The Encoders layers job is to map all input sequences into an abstract continuous representation that holds the learned information for that entire sequence. It contains 2 sub-modules, multi-headed attention, followed by a fully connected network. There are also residual connections around each of the two sublayers followed by a layer normalization.
+
+Code:
+
 ```python
 class EncoderBlock(nn.Module):
     def __init__(self,embed_size,heads,bias=False):
@@ -126,7 +211,13 @@ class Encoder(nn.Module):
         return out
 ```
 
-### 2. Decoder
+### 5. Decoder
+
+![](https://miro.medium.com/v2/resize:fit:640/0*u8nSpT8Z8ITwzNLV.gif)
+
+The decoder’s job is to generate text sequences. The decoder has a similar sub-layer as the encoder. it has two multi-headed attention layers, a pointwise feed-forward layer, and residual connections, and layer normalization after each sub-layer. These sub-layers behave similarly to the layers in the encoder but each multi-headed attention layer has a different job. The decoder is capped off with a linear layer that acts as a classifier, and a softmax to get the word probabilities.
+
+Code:
 
 ```python
 class DecoderBlock(nn.Module):
@@ -170,3 +261,7 @@ class Decoder(nn.Module):
         return out
 ```
 
+## References
+[1] [Illustrated Guide to Transformers- Step by Step Explanation](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
+
+[2] [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
