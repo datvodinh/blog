@@ -261,6 +261,10 @@ class Decoder(nn.Module):
         return out
 ```
 
+## IV. Conclusion
+
+(To be continued)
+
 ## References
 [1] [Illustrated Guide to Transformers- Step by Step Explanation](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
 
