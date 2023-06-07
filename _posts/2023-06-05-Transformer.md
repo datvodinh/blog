@@ -12,6 +12,7 @@ image:
   height: 600
   alt: Transformer Model
 enable_d3: true
+pin: true
 ---
 
 We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
@@ -266,6 +267,6 @@ class Decoder(nn.Module):
 (To be continued)
 
 ## References
-[1] [Illustrated Guide to Transformers- Step by Step Explanation](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
+1. [Illustrated Guide to Transformers- Step by Step Explanation](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
 
-[2] [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+2. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
