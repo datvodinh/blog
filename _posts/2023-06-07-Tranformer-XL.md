@@ -12,5 +12,6 @@ image:
   height: 600
   alt: Transformer Model
 enable_d3: true
-pin: true
 ---
+
+(Coming soon!)
