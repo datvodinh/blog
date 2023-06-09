@@ -33,13 +33,14 @@ The `key`/`value`/`query` concept is analogous to retrieval systems.
 
 For example, when you search for videos on Youtube, the search engine will map your query (text in the search bar) against a set of keys (video title, description, etc.) associated with candidate videos in their database, then present you the best matched videos (values).
 
+## II. Attention Mechanism
+
+### 1. Attention
+
 The attention operation can be thought of as a retrieval process as well.
 
 $$\alpha(\mathbf{q}, \mathbf{k}_i) = \mathrm{softmax}(a(\mathbf{q}, \mathbf{k}_i)) = \frac{\exp(\mathbf{q}^\top \mathbf{k}_i / \sqrt{d})}{\sum_{j=1} \exp(\mathbf{q}^\top \mathbf{k}_j / \sqrt{d})}$$
 
-## II. Attention Mechanism
-
-### 1. Attention
 Denote by $\mathcal{D} \stackrel{\mathrm{def}}{=} \{(\mathbf{k}_1, \mathbf{v}_1), \ldots (\mathbf{k}_m, \mathbf{v}_m)\}$ a database of `m` tuples of `keys` and `values`. Moreover, denote by `q` a query. Then we can define the attention over $\mathcal{D}$ as
 
 $$\mathrm{Attention}(\mathbf{q}, \mathcal{D}) \stackrel{\mathrm{def}}{=} \sum_{i=1}^m \alpha(\mathbf{q}, \mathbf{k}_i) \mathbf{v}_i$$
