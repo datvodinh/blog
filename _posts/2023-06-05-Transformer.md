@@ -26,7 +26,7 @@ We will explore the power of the Transformer algorithm, the driving force behind
 ## I. Key - Query - Value
 
 <!-- ![Scaled Dot Product](dot-product.png){: height="400px" width="200px"} -->
-![](qkv.gif)
+![](qkv.gif){: .shadow}
 
 
 The `key`/`value`/`query` concept is analogous to retrieval systems. 
@@ -51,7 +51,7 @@ where $\alpha(\mathbf{q}, \mathbf{k}_i) \in \mathbb{R}$ (i=1,...,m) are scalar a
 
 <!-- ![Multi-Head Attention](multi-head-attention.png){: height="500px" width="250px"} -->
 
-![](multi-head-attention.gif)
+![](multi-head-attention.gif){: .shadow}
 
 Multi-head attention allows the model to jointly attend to information from different representation
 subspaces at different positions. With a single attention head, averaging inhibits this.
@@ -101,7 +101,7 @@ class MultiHeadAttention(nn.Module):
 
 ## III. Encoder Decoder
 
-![](encoder-decoder.webp)
+![](encoder-decoder.webp){: .shadow}
 
 Most competitive neural sequence transduction models have an encoder-decoder structure. Here, the encoder maps an input sequence of symbol representations $(x_{1}, ..., x_{n})$ to a sequence of continuous representations $z = (z_{1}, ..., z_{n})$. Given z, the decoder then generates an output sequence $(y_{1}, ..., y_{m})$ of symbols one element at a time. At each step the model is auto-regressive, consuming the previously generated symbols as additional input when generating the next.
 
@@ -109,7 +109,7 @@ The Transformer follows this overall architecture using stacked self-attention a
 
 ### 1. Positional Encoding
 
-![](positional-encoding.webp)
+![](positional-encoding.webp){: .shadow}
 
 Positional encoding describes the location or position of an entity in a 
 sequence so that each position is assigned a unique representation.
@@ -144,25 +144,25 @@ class PositionalEncoding(nn.Module):
 
 The multi-headed attention output vector is added to the original positional input embedding. This is called a residual connection. The output of the residual connection goes through a layer normalization.
 
-![](residual.gif)
+![](residual.gif){: .shadow}
 
 Each of the layers in our encoder and decoder contains a fully connected feed-forward network, which is applied to each position separately and identically. This consists of two linear transformations with a ReLU activation in between.
 
 $$ FFN(x) = max(0,x{W}_{1} + b_{1}){W}_{2} + b_{2}$$
 
-![](norm.gif)
+![](norm.gif){: .shadow}
 
 The residual connections help the network train, by allowing gradients to flow through the networks directly. The layer normalizations are used to stabilize the network which results in substantially reducing the training time necessary. The pointwise feedforward layer is used to project the attention outputs potentially giving it a richer representation.
 ### 3.Masking
 
 Decoders First multi-headed attention layer operates slightly differently. Since the decoder is autoregressive and generates the sequence word by word, you need to prevent it from conditioning to future tokens
 
-![](mask.webp)
+![](mask.webp){: .shadow}
 
 ### 4.Encoder
 
 
-![](encoder.webp)
+![](encoder.webp){: .shadow}
 
 The Encoders layers job is to map all input sequences into an abstract continuous representation that holds the learned information for that entire sequence. It contains 2 sub-modules, multi-headed attention, followed by a fully connected network. There are also residual connections around each of the two sublayers followed by a layer normalization.
 
@@ -215,7 +215,7 @@ class Encoder(nn.Module):
 
 ### 5. Decoder
 
-![](decoder.gif)
+![](decoder.gif){: .shadow}
 
 The decoder’s job is to generate text sequences. The decoder has a similar sub-layer as the encoder. it has two multi-headed attention layers, a pointwise feed-forward layer, and residual connections, and layer normalization after each sub-layer. These sub-layers behave similarly to the layers in the encoder but each multi-headed attention layer has a different job. The decoder is capped off with a linear layer that acts as a classifier, and a softmax to get the word probabilities.
 

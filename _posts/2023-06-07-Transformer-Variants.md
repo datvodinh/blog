@@ -71,7 +71,7 @@ $$e_{ij} = \frac{x_i W^Q (x_j W^K) + x_i W^Q (a_{ij}^{K})^{T}}{\sqrt{d_z}} \tag{
 
 In vanilla transformer, the entire corpus is split into shorter segments of manageable sizes, and only train the model within each segment, ignoring all contextual information from previous segments. Under this training paradigm, information never flows across segments in either the forward or backward pass.
 
-![](train-eval-vanilla.png)
+![](train-eval-vanilla.png){: .shadow}
 
 During evaluation, at each step, the vanilla model also consumes a segment of the same length as in training, but only makes one prediction at the last position. Then, at the next step, the segment is shifted to the right by only one position, and the new segment has to be processed all from scratch, which is extremely expensive.
 
@@ -79,7 +79,7 @@ During evaluation, at each step, the vanilla model also consumes a segment of th
 
 To address the limitations of using a fixed-length context, a recurrence mechanism is introduced to the Transformer architecture.
 
-![](train-eval-xl.png)
+![](train-eval-xl.png){: .shadow}
 
 During training, the hidden state sequence computed for the previous segment is *fixed* and *cached* to be reused as an extended context when the model processes the next new segment.Although the gradient still remains within a
 segment, this additional input allows the network to exploit information in the history, leading to an ability of modeling longer-term dependency and
@@ -172,7 +172,7 @@ with $h_{\tau}^{0} := E_{s_{\tau}}$ defined as the word embedding sequence.
 
 ## III. Gated Transformer-XL
 
-![](GTrXL.png)
+![](GTrXL.png){: .shadow}
 
 ### 3.1 Indentity Map Reordering
 
