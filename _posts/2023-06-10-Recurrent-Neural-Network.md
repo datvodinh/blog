@@ -18,7 +18,7 @@ image:
 
 Long Short Term Memory networks – usually just called “LSTM” – are a special kind of RNN, capable of learning long-term dependencies. LSTM are explicitly designed to avoid the long-term dependency problem. Remembering information for long periods of time is practically their default behavior, not something they struggle to learn!
 
-![](lstm.gif)
+![](lstm.gif){: .shadow}
 
 ### **Step-by-Step LSTM Walk Through**
 
@@ -30,7 +30,7 @@ First step decides what information should be thrown away or kept. Information f
 
 $$f_{t} = \sigma (W_{f} \cdot [h_{t-1},x_{t}] + b_{f}) \tag{1}$$
 
-![](forget-gate.gif)
+![](forget-gate.gif){: .shadow}
 
 ### **Input gate**
 
@@ -44,7 +44,7 @@ $$i_{t} = \sigma (W_{i} \cdot [h_{t-1},x_{t}] + b_{i}) \tag{2}$$
 
 $$\tilde C_{t} = \tanh(W_{C} \cdot [h_{t-1},x_{t}] +b_{C}) \tag{3}$$
 
-![](input-gate.gif)
+![](input-gate.gif){: .shadow}
 
 ### **Cell state**
 
@@ -52,7 +52,7 @@ Now we have enough infomation to update the new cell state. We multiply the old 
 
 $$C_{t} = f_{t} \ast C_{t-1} + i_{t} \ast \tilde C_{t} \tag{4}$$
 
-![](cell-state.gif)
+![](cell-state.gif){: .shadow}
 
 ### **Output gate**
 
@@ -62,7 +62,7 @@ $$o_{t} = \sigma (W_{o} \cdot [h_{t-1},x_{t}] + b_{o}) \tag{5}$$
 
 $$h_{t} = o_{t} \ast \tanh(C_{t}) \tag{6}$$
 
-![](output-gate.gif)
+![](output-gate.gif){: .shadow}
 
 ### **Code:**
 
@@ -88,7 +88,7 @@ def lstm(inputs, state, params):
 
 GRU is the variation of the LSTM. It combines the forget and input gates into a single “update gate.” It also merges the cell state and hidden state, and makes some other changes.
 
-![](gru-cell.webp)
+![](gru-cell.webp){: .shadow}
 
 ### **Update gate**
 

@@ -76,7 +76,7 @@ In vanilla transformer, the entire corpus is split into shorter segments of mana
 
 During evaluation, at each step, the vanilla model also consumes a segment of the same length as in training, but only makes one prediction at the last position. Then, at the next step, the segment is shifted to the right by only one position, and the new segment has to be processed all from scratch, which is extremely expensive.
 
-### 2.3 Segment-Level Recurrence with State Reuse
+### 2.2 Segment-Level Recurrence with State Reuse
 
 To address the limitations of using a fixed-length context, a recurrence mechanism is introduced to the Transformer architecture.
 
@@ -105,7 +105,7 @@ Compared to the standard Transformer, the critical difference lies in that the k
 With this recurrence mechanism applied to every two consecutive segments of a corpus, it essentially creates a segment-level recurrence in the hidden states. As a result, the effective context being utilized can go way beyond just two segments. This additional connection increases the largest possible dependency linearly w.r.t. the number of layers as well
 as the segment length, i.e., O(N × L). Moreover, this recurrence mechanism also resolves the context fragmentation issue, providing necessary context for tokens in the front of a new segment.
 
-### 2.1 Relative Positional Encoding
+### 2.3 Relative Positional Encoding
 
 Naively applying segment-level recurrence does not work, however, because the positional encodings are not coherent when we reuse the previous segments. For example, consider an old segment with contextual positions [0, 1, 2, 3]. When a new segment is processed, we have positions [0, 1, 2, 3, 0, 1, 2, 3] for the two segments combined, where the semantics of each position id is incoherent through out the sequence.
 
@@ -148,7 +148,85 @@ an intuitive meaning:
 - Term (d) encodes a global positional bias.
 
 
-### 2.3 Architectures
+### **Bonus: Efficient Computation of the Attention with Relative Positional Embedding**
+
+The naive way of computing the $W_{k,R}R_{i−j}$ for all pairs $(i, j)$ is subject to a quadratic cost.
+[Author](https://arxiv.org/abs/1901.02860) present a simple method with only a linear cost. 
+
+Define $Q$ in a reversed order, i.e., $Q_{k} = W_{k,R}R_{M+L−1−k}$. Firstly, notice that the relative distance $i − j$ can only be integer from $0$ to $M + L − 1$, where $M$ and $L$ are the memory length and segment length respectively. Hence, the rows of the matrix
+
+$$
+\mathbf{Q}:=\left[\begin{array}{c}
+\mathbf{R}_{M+L-1}^{\top} \\
+\mathbf{R}_{M+L-2}^{\top} \\
+\vdots \\
+\mathbf{R}_1^{\top} \\
+\mathbf{R}_0^{\top}
+\end{array}\right] \mathbf{W}_{k, R}{ }^{\top}=\left[\begin{array}{c}
+{\left[\mathbf{W}_{k, R} \mathbf{R}_{M+L-1}\right]^{\top}} \\
+{\left[\mathbf{W}_{k, R} \mathbf{R}_{M+L-2}\right]^{\top}} \\
+\vdots \\
+{\left[\mathbf{W}_{k, R} \mathbf{R}_1\right]^{\top}} \\
+{\left[\mathbf{W}_{k, R} \mathbf{R}_0\right]^{\top}}
+\end{array}\right] \in \mathbb{R}^{(M+L) \times d}
+$$
+
+consist of all possible vector outputs of $W_{k,R}R_{i−j}$ for any $(i, j)$.
+
+Next, collect the term $(b)$ for all possible $i, j$ into the following $L × (M + L)$ matrix:
+
+$$
+\begin{aligned}
+& \mathbf{B}=\left[\begin{array}{cccccc}
+q_0^{\top} \mathbf{W}_{k, R} \mathbf{R}_M & \cdots & q_0^{\top} \mathbf{W}_{k, R} \mathbf{R}_0 & 0 & \cdots & 0 \\
+q_1^{\top} \mathbf{W}_{k, R} \mathbf{R}_{M+1} & \cdots & q_1^{\top} \mathbf{W}_{k, R} \mathbf{R}_1 & q_1^{\top} \mathbf{W}_{k, R} \mathbf{R}_0 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+q_{L-1}^{\top} \mathbf{W}_{k, R} \mathbf{R}_{M+L-1} & \cdots & q_{L-1}^{\top} \mathbf{W}_{k, R} \mathbf{R}_{M+L-1} & q_{L-1}^{\top} \mathbf{W}_{k, R} \mathbf{R}_{L-1} & \cdots & q_{L-1}^{\top} \mathbf{W}_{k, R} \mathbf{R}_0
+\end{array}\right] \\
+& =\left[\begin{array}{cccccc}
+q_0^{\top} \mathbf{Q}_{L-1} & \cdots & q_0^{\top} \mathbf{Q}_{M+L-1} & 0 & \cdots & 0 \\
+q_1^{\top} \mathbf{Q}_{L-2} & \cdots & q_1^{\top} \mathbf{Q}_{M+L-2} & q_1^{\top} \mathbf{Q}_{M+L-1} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+q_{L-1}^{\top} \mathbf{Q}_0 & \cdots & q_{L-1}^{\top} \mathbf{Q}_M & q_{L-1}^{\top} \mathbf{Q}_{M+1} & \cdots & q_{L-1}^{\top} \mathbf{Q}_{M+L-1}
+\end{array}\right] \\
+&
+\end{aligned}
+$$
+
+Then, [Author](https://arxiv.org/abs/1901.02860) further define:
+
+$$
+\widetilde{\mathbf{B}}=\mathbf{q Q}^{\top}=\left[\begin{array}{cccccc}
+q_0^{\top} \mathbf{Q}_0 & \cdots & q_0^{\top} \mathbf{Q}_M & q_0^{\top} \mathbf{Q}_{M+1} & \cdots & q_0^{\top} \mathbf{Q}_{M+L-1} \\
+q_1^{\top} \mathbf{Q}_0 & \cdots & q_1^{\top} \mathbf{Q}_M & q_1^{\top} \mathbf{Q}_{M+1} & \cdots & q_1^{\top} \mathbf{Q}_{M+L-1} \\
+\vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+q_{L-1}^{\top} \mathbf{Q}_0 & \cdots & q_{L-1}^{\top} \mathbf{Q}_M & q_{L-1}^{\top} \mathbf{Q}_{M+1} & \cdots & q_{L-1}^{\top} \mathbf{Q}_{M+L-1}
+\end{array}\right]
+$$
+
+It is easy to see an immediate relationship between $B$ and $\tilde B$, where the $i-th$ row of $B$ is simply a left-shifted of $i-th$ row of $\tilde B$ by $(L-i-1)$ column. Hence, the computation of $B$ only requires a matrix multiplication $qQ^{T}$ to compute $\tilde B$ and then a set of left-shifts.
+
+Similarly, we can collect all term $(d)$ for all possible $i, j$ into another $L × (M + L)$ matrix $D$:
+
+$$
+\mathbf{D}=\left[\begin{array}{cccccc}
+v^{\top} \mathbf{Q}_{L-1} & \cdots & v^{\top} \mathbf{Q}_{M+L-1} & 0 & \cdots & 0 \\
+v^{\top} \mathbf{Q}_{L-2} & \cdots & v^{\top} \mathbf{Q}_{M+L-2} & v^{\top} \mathbf{Q}_{M+L-1} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+v^{\top} \mathbf{Q}_0 & \cdots & v^{\top} \mathbf{Q}_M & v^{\top} \mathbf{Q}_{M+1} & \cdots & v^{\top} \mathbf{Q}_{M+L-1}
+\end{array}\right]
+$$
+
+Then, follow the same procedure to define
+
+$$
+\widetilde{\mathbf{d}}=[\mathbf{Q} v]^{\top}=\left[\begin{array}{llllll}
+v^{\top} \mathbf{Q}_0 & \cdots & v^{\top} \mathbf{Q}_M & v^{\top} \mathbf{Q}_{M+1} & \cdots & v^{\top} \mathbf{Q}_{M+L-1}
+\end{array}\right] .
+$$
+
+Again, each row of $D$ is simply a left-shift version of $\tilde d$. Hence, the main computation cost comes from the matrix-vector multiplication $\tilde d = [Qv]^{T}$, which is not expensive any more.
+### 2.4 Architectures
 
 Equipping the recurrence mechanism with our proposed relative positional embedding, the Transformer-XL architecture is finally arrived. For
 completeness, the computational procedure for a N-layer Transformer-XL with a single attention head is summarized as followed: 
