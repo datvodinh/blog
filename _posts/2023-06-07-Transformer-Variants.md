@@ -6,6 +6,7 @@ tags: [ml,ai,llm]     # TAG names should always be lowercase
 img_path: /assets/img/GTrXL/
 math: true
 mermaid: true
+pin: true
 image:
   path: GTrXL.png
   width: 300
