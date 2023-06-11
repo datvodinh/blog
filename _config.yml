@@ -20,7 +20,7 @@ timezone: Asia/Ho_Chi_Minh
 
 title: Võ Đình Đạt # the main title
 
-tagline: Junior Data Scientist # it will display as the sub-title
+tagline: Machine Learning Blog # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive, and powerful Jekyll theme for presenting professional writing.
