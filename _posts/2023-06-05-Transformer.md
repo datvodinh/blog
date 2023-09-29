@@ -12,7 +12,6 @@ image:
   height: 600
   alt: Transformer Model
 enable_d3: true
-pin: true
 ---
 
 We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
