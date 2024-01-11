@@ -29,7 +29,7 @@ description: >- # used by seo meta and the atom feed
 url: ""
 
 github:
-  username: datvodinh10 # change to your github username
+  username: datvodinh # change to your github username
 
 twitter:
   username: twitter_username # change to your twitter username
@@ -42,7 +42,7 @@ social:
   links:
     # The first element serves as the copyright owner's link
     - https://twitter.com/username # change to your twitter homepage
-    - https://github.com/datvodinh10 # change to your github homepage
+    - https://github.com/datvodinh # change to your github homepage
     # Uncomment below to add more social links
     - https://www.facebook.com/vdd2003/
     - https://www.linkedin.com/in/vo-dinh-dat-53059b227/
