@@ -2,7 +2,7 @@
 title: Modern Recurrent Neural Network
 date: 2023-06-10 09:00:00 +0700
 categories: [Machine Learning, AI]
-tags: [ml,ai,nlp,rnn]     # TAG names should always be lowercase
+tags: [ml, ai, nlp, rnn] # TAG names should always be lowercase
 img_path: /assets/img/RNN/
 math: true
 image:
@@ -10,9 +10,7 @@ image:
   width: 300
   height: 600
   alt: Modern Recurrent Neural Network
-
 ---
-
 
 ## I. Long Short Term Memory (LSTM)
 
@@ -24,8 +22,6 @@ Long Short Term Memory networks – usually just called “LSTM” – are a spe
 
 ### **Forget gate**
 
-
-
 First step decides what information should be thrown away or kept. Information from the previous hidden state and information from the current input is passed through the sigmoid function. Values come out between 0 and 1. The closer to 0 means to forget, and the closer to 1 means to keep:
 
 $$f_{t} = \sigma (W_{f} \cdot [h_{t-1},x_{t}] + b_{f}) \tag{1}$$
@@ -34,11 +30,7 @@ $$f_{t} = \sigma (W_{f} \cdot [h_{t-1},x_{t}] + b_{f}) \tag{1}$$
 
 ### **Input gate**
 
-
-
 The next step is to decide what new information will be updated in the cell state. First, pass the previous hidden state and current input into a sigmoid layer called the "input gate layer". That decides which values will be updated by transforming the values to be between 0 and 1. 0 means not important, and 1 means important. The hidden state and current input also be passed into the tanh function to squish values between -1 and 1 to help regulate the network and creates new candidate values, $\tilde C_{t}$:
-
-
 
 $$i_{t} = \sigma (W_{i} \cdot [h_{t-1},x_{t}] + b_{i}) \tag{2}$$
 
@@ -113,9 +105,10 @@ $$\tilde h_{t} = \tanh(W \cdot [r_{t} \ast h_{t-1},x_{t}]) \tag{9}$$
 
 The update gate $z_{t}$ determines the extent to which the new hidden state $h_{t}$ is just the old state $h_{t-1}$ and by how much the new candidate state $\tilde h_{t}$ is used. The update gate Zt can be used for this purpose, simply by taking elementwise convex combinations between both $h_{t-1}$ and $\tilde h_{t}$. This leads to the final update equation for the GRU:
 
-$$ h_{t} = z_{t} \odot h_{t-1} + (1 - z_{t}) \odot \tilde h_{t} \tag{10}$$
+$$ h*{t} = z*{t} \odot h*{t-1} + (1 - z*{t}) \odot \tilde h\_{t} \tag{10}$$
 
 In summary, GRUs have the following two distinguishing features:
+
 - Reset gates help capture short-term dependencies in sequences.
 - Update gates help capture long-term dependencies in sequences.
 
@@ -136,8 +129,8 @@ def gru(inputs, state, params):
     return torch.cat(outputs, dim=0), (H,)
 ```
 
-
 ## Reference
+
 1. [Illustrated Guide to LSTM’s and GRU’s: A step by step explanation](https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21)
 2. [Illustrated Guide to Recurrent Neural Networks](https://towardsdatascience.com/illustrated-guide-to-recurrent-neural-networks-79e5eb8049c9)
 3. [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)

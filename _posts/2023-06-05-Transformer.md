@@ -2,7 +2,7 @@
 title: Transformer from Scratch
 date: 2023-06-05 23:00:00 +0700
 categories: [Machine Learning, AI]
-tags: [ml,ai,llm]     # TAG names should always be lowercase
+tags: [ml, ai, llm] # TAG names should always be lowercase
 img_path: /assets/img/transformer/
 math: true
 mermaid: true
@@ -16,19 +16,17 @@ enable_d3: true
 
 We will explore the power of the Transformer algorithm, the driving force behind the remarkable success of Large Language Models. Additionally, I will take you on a journey of building this algorithm from the ground up, providing you with a comprehensive understanding of its inner workings.
 
-
-
-
 <!-- ![Alt Text](/assets/img/transformer.png){: height="40px" width="20px"} -->
---- 
+
+---
 
 ## I. Key - Query - Value
 
 <!-- ![Scaled Dot Product](dot-product.png){: height="400px" width="200px"} -->
+
 ![](qkv.gif){: .shadow}
 
-
-The `key`/`value`/`query` concept is analogous to retrieval systems. 
+The `key`/`value`/`query` concept is analogous to retrieval systems.
 
 For example, when you search for videos on Youtube, the search engine will map your query (text in the search bar) against a set of keys (video title, description, etc.) associated with candidate videos in their database, then present you the best matched videos (values).
 
@@ -57,11 +55,10 @@ subspaces at different positions. With a single attention head, averaging inhibi
 
 $$ MultiHead(Q,K,V) = [head_{1},...,head_{h}]W^{O} $$
 
-$$ \text{where } {head_{i}} = \text{Attention }(Q{W_{i}^{Q}},K{W_{i}^{K}},V{W_{i}^{V}}) $$
+$$ \text{where } {head*{i}} = \text{Attention }(Q{W*{i}^{Q}},K{W*{i}^{K}},V{W*{i}^{V}}) $$
 
 Where the projections are parameter matrices $W_{i}^{Q} ∈ R^{d_{model}×d_{k}} , W_{i}^{K} ∈ R^{d_{model}×d_{k}} , W_{i}^{V} ∈ R^{d_{model}×d_{v}}$
 and $W^{O} ∈ R^{hd_{v}×d_{model}}$
-
 
 Code:
 
@@ -96,8 +93,6 @@ class MultiHeadAttention(nn.Module):
         return out
 ```
 
-
-
 ## III. Encoder Decoder
 
 ![](encoder-decoder.webp){: .shadow}
@@ -110,19 +105,20 @@ The Transformer follows this overall architecture using stacked self-attention a
 
 ![](positional-encoding.webp){: .shadow}
 
-Positional encoding describes the location or position of an entity in a 
+Positional encoding describes the location or position of an entity in a
 sequence so that each position is assigned a unique representation.
 
 The positional encoding outputs `X+P` using a positional embedding matrix $\mathbf{P} \in \mathbb{R}^{n \times d}$ of the same shape, whose element on the $i^{th}$ row and the ${(2j)}^{th}$ or the ${(2j+1)}^{th}$ column is:
 
-$$\begin{aligned} 
+$$
+\begin{aligned}
 p_{i, 2j} &= \sin\left(\frac{i}{10000^{2j/d}}\right), \\
 p_{i, 2j+1} &= \cos\left(\frac{i}{10000^{2j/d}}\right)
-\end{aligned} $$
-
-
+\end{aligned}
+$$
 
 Code:
+
 ```python
 class PositionalEncoding(nn.Module):
     def __init__(self,num_hiddens,dropout = 0.5,max_len=1000):
@@ -139,6 +135,7 @@ class PositionalEncoding(nn.Module):
         x = x + self.PE[:,:x.shape[1],:]
         return self.dropout(x)
 ```
+
 ### 2. The Residual Connections, Layer Normalization, and Feed Forward Network
 
 The multi-headed attention output vector is added to the original positional input embedding. This is called a residual connection. The output of the residual connection goes through a layer normalization.
@@ -152,6 +149,7 @@ $$ FFN(x) = max(0,x{W}_{1} + b_{1}){W}_{2} + b_{2}$$
 ![](norm.gif){: .shadow}
 
 The residual connections help the network train, by allowing gradients to flow through the networks directly. The layer normalizations are used to stabilize the network which results in substantially reducing the training time necessary. The pointwise feedforward layer is used to project the attention outputs potentially giving it a richer representation.
+
 ### 3.Masking
 
 Decoders First multi-headed attention layer operates slightly differently. Since the decoder is autoregressive and generates the sequence word by word, you need to prevent it from conditioning to future tokens
@@ -159,7 +157,6 @@ Decoders First multi-headed attention layer operates slightly differently. Since
 ![](mask.webp){: .shadow}
 
 ### 4.Encoder
-
 
 ![](encoder.webp){: .shadow}
 
@@ -208,7 +205,7 @@ class Encoder(nn.Module):
         out = self.dropout(x_embed)
         for layer in self.encoder_layers:
             out = layer(out,out,out,mask)
-    
+
         return out
 ```
 
@@ -267,6 +264,7 @@ class Decoder(nn.Module):
 (To be continued)
 
 ## References
+
 1. [Illustrated Guide to Transformers- Step by Step Explanation](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
 
 2. [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
