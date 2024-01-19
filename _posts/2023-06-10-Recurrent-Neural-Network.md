@@ -14,7 +14,7 @@ image:
 
 ## I. Long Short Term Memory (LSTM)
 
-Long Short Term Memory networks – usually just called “LSTM” – are a special kind of RNN, capable of learning long-term dependencies. LSTM are explicitly designed to avoid the long-term dependency problem. Remembering information for long periods of time is practically their default behavior, not something they struggle to learn!
+Long Short Term Memory networks – usually just called “LSTM” – are a special kind of RNN, capable of learning long-term dependencies. LSTM are explicitly designed to avoid the short-term dependency problem. Remembering information for long periods of time is practically their default behavior, not something they struggle to learn!
 
 ![](lstm.gif){: .shadow}
 
@@ -105,7 +105,7 @@ $$\tilde h_{t} = \tanh(W \cdot [r_{t} \ast h_{t-1},x_{t}]) \tag{9}$$
 
 The update gate $z_{t}$ determines the extent to which the new hidden state $h_{t}$ is just the old state $h_{t-1}$ and by how much the new candidate state $\tilde h_{t}$ is used. The update gate Zt can be used for this purpose, simply by taking elementwise convex combinations between both $h_{t-1}$ and $\tilde h_{t}$. This leads to the final update equation for the GRU:
 
-$$ h*{t} = z*{t} \odot h*{t-1} + (1 - z*{t}) \odot \tilde h\_{t} \tag{10}$$
+$$ h_{t} = z_{t} \odot h_{t-1} + (1 - z_{t}) \odot \tilde h\_{t} \tag{10}$$
 
 In summary, GRUs have the following two distinguishing features:
 
