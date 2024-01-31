@@ -1,13 +1,13 @@
 ---
-title: Vietnamese Handwritting OCR
-date: 2024-01-11 07:00:00 +0700
+title: "Image Generative Model (Part 2): Latent Diffusion Model"
+date: 2024-01-11 19:00:00 +0700
 categories: [Machine Learning, AI]
 tags: [ml, ai] # TAG names should always be lowercase
-img_path: /assets/img/ocr/
+img_path: /assets/img/diffusion/
 math: true
 mermaid: true
 image:
-  path: ocr.png
+  path: diffusion.png
   width: 300
   height: 600
   alt: Proximal Policy Optimization (OpenAI)
